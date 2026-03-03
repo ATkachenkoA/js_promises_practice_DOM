@@ -8,35 +8,33 @@ function addPromises() {
       reject(new Error('First promise was rejected'));
     }, 3000);
 
-    document.addEventListener(
-      'mousedown',
-      (e) => {
-        if (e.button === 0) {
-          clearTimeout(timerId);
-          resolve('First promise was resolved');
-        }
-      },
-      { once: true },
-    );
+    function firstClickHandler(e) {
+      if (e.button === 0) {
+        clearTimeout(timerId);
+        resolve('First promise was resolved');
+        document.removeEventListener('mousedown', firstClickHandler);
+      }
+    }
+
+    document.addEventListener('mousedown', firstClickHandler);
   });
 
   const secondPromise = new Promise((resolve, reject) => {
-    document.addEventListener(
-      'mousedown',
-      (e) => {
-        if (e.button === 0 || e.button === 2) {
-          resolve('Second promise was resolved');
-        }
-      },
-      { once: true },
-    );
+    function secondClickHandler(e) {
+      if (e.button === 0 || e.button === 2) {
+        resolve('Second promise was resolved');
+        document.removeEventListener('mousedown', secondClickHandler);
+      }
+    }
+
+    document.addEventListener('mousedown', secondClickHandler);
   });
 
   const thirdPromise = new Promise((resolve, reject) => {
     let leftClicked = false;
     let rightClicked = false;
 
-    document.addEventListener('mousedown', (e) => {
+    function thirdClickHandler(e) {
       if (e.button === 0) {
         leftClicked = true;
       }
@@ -47,8 +45,11 @@ function addPromises() {
 
       if (leftClicked && rightClicked) {
         resolve('Third promise was resolved');
+        document.removeEventListener('mousedown', thirdClickHandler);
       }
-    });
+    }
+
+    document.addEventListener('mousedown', thirdClickHandler);
   });
 
   function handlerSuccess(message) {
