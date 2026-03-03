@@ -4,17 +4,18 @@ function addPromises() {
   document.addEventListener('contextmenu', (e) => e.preventDefault());
 
   const firstPromise = new Promise((resolve, reject) => {
-    const timerId = setTimeout(() => {
-      reject(new Error('First promise was rejected'));
-    }, 3000);
-
     function firstClickHandler(e) {
       if (e.button === 0) {
         clearTimeout(timerId);
-        resolve('First promise was resolved');
         document.removeEventListener('mousedown', firstClickHandler);
+        resolve('First promise was resolved');
       }
     }
+
+    const timerId = setTimeout(() => {
+      document.removeEventListener('mousedown', firstClickHandler);
+      reject(new Error('First promise was rejected'));
+    }, 3000);
 
     document.addEventListener('mousedown', firstClickHandler);
   });
